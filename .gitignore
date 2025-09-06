@@ -1,0 +1,67 @@
+# Java/Maven
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.log
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+*.idea/
+*.vscode/
+*.project
+*.classpath
+*.settings/
+*.factorypath
+*.apt_generated/
+*.classpath
+*.project
+*.settings/
+*.mvn/
+
+# Maven
+log/
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse
+*.launch
+.settings/
+.metadata/
+bin/
+
+# IntelliJ
+*.ipr
+*.iws
+*.idea/
+out/
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Docker
+**/docker-compose.override.yml
+**/.env
+
+# Postman
+postman/*
+
+# Kubernetes
+*.yaml
+!deployment/k8s/**/*.yaml
+
+# Misc
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# Node
+node_modules/
+
+# VSCode
+.vscode/
+

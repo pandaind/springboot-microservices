@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microservices-ingress
+  namespace: microservices
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: microservices.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gateway
+            port:
+              number: 8080
+      - path: /eureka
+        pathType: Prefix
+        backend:
+          service:
+            name: discovery
+            port:
+              number: 8761
+      - path: /zipkin
+        pathType: Prefix
+        backend:
+          service:
+            name: zipkin
+            port:
+              number: 9411
+      - path: /mail
+        pathType: Prefix
+        backend:
+          service:
+            name: mail-dev
+            port:
+              number: 1080

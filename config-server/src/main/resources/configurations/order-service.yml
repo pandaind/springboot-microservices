@@ -1,0 +1,151 @@
+# Common Configuration
+---
+server:
+  port: 8070
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+# Local Development Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/order
+    username: admin
+    password: admin
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: orderConfirmation:in.pandac.ecommerce.kafka.OrderConfirmation
+  jpa:
+    show-sql: true
+
+application:
+  config:
+    customer-url: http://localhost:8080/api/v1/customers
+    payment-url: http://localhost:8080/api/v1/payments
+    product-url: http://localhost:8080/api/v1/products
+
+# Docker Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://postgresql:5432/order
+    username: admin
+    password: admin
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+  kafka:
+    producer:
+      bootstrap-servers: kafka:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: orderConfirmation:in.pandac.ecommerce.kafka.OrderConfirmation
+
+application:
+  config:
+    customer-url: http://customer:8090/api/v1/customers
+    payment-url: http://payment:8060/api/v1/payments
+    product-url: http://product:8050/api/v1/products
+
+# Kubernetes Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "k8s"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://postgresql:5432/order
+    username: admin
+    password: admin
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 5
+  kafka:
+    producer:
+      bootstrap-servers: kafka:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: orderConfirmation:in.pandac.ecommerce.kafka.OrderConfirmation
+
+application:
+  config:
+    customer-url: http://gateway:8080/api/v1/customers
+    payment-url: http://gateway:8080/api/v1/payments
+    product-url: http://gateway:8080/api/v1/products
+
+# Production Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_HOST:postgresql}:${DB_PORT:5432}/${DB_NAME:order}
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:admin}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:20}
+      minimum-idle: ${DB_POOL_MIN:10}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_SERVERS:kafka:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: orderConfirmation:in.pandac.ecommerce.kafka.OrderConfirmation
+        security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+        retries: 3
+        acks: all
+        compression.type: snappy
+
+application:
+  config:
+    customer-url: ${CUSTOMER_SERVICE_URL:http://customer:8090/api/v1/customers}
+    payment-url: ${PAYMENT_SERVICE_URL:http://payment:8060/api/v1/payments}
+    product-url: ${PRODUCT_SERVICE_URL:http://product:8050/api/v1/products}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    db:
+      enabled: true
+    kafka:
+      enabled: true

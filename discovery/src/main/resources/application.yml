@@ -1,0 +1,35 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: discovery-service
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+  application:
+    name: discovery-service
+
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: discovery
+    prefer-ip-address: false
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always

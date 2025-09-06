@@ -1,0 +1,23 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: order-service
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+    import: optional:configserver:http://config-server:8888
+  application:
+    name: order-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always

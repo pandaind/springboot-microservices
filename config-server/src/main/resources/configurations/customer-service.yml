@@ -1,0 +1,85 @@
+# Common Configuration
+---
+server:
+  port: 8090
+
+# Local Development Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      host: localhost
+      port: 27017
+      database: customer
+      authentication-database: admin
+
+# Docker Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      host: mongodb
+      port: 27017
+      database: customer
+      authentication-database: admin
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://discovery:8761/eureka
+
+# Kubernetes Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "k8s"
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      host: mongodb
+      port: 27017
+      database: customer
+      authentication-database: admin
+
+# Production Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  data:
+    mongodb:
+      username: ${MONGODB_USERNAME:admin}
+      password: ${MONGODB_PASSWORD:admin}
+      host: ${MONGODB_HOST:mongodb}
+      port: ${MONGODB_PORT:27017}
+      database: ${MONGODB_DATABASE:customer}
+      authentication-database: ${MONGODB_AUTH_DB:admin}
+      ssl:
+        enabled: ${MONGODB_SSL_ENABLED:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    mongo:
+      enabled: true

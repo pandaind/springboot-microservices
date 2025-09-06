@@ -1,0 +1,138 @@
+services:
+  # Spring Cloud Infrastructure
+  config-server:
+    container_name: ms-config-server
+    build: ../config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,native
+    networks:
+      - uservices-network
+    restart: unless-stopped
+
+  discovery:
+    container_name: ms-discovery
+    build: ../discovery
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_INSTANCE_HOSTNAME=discovery
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRY=false
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery:8761/eureka/
+      - SERVER_PORT=8761
+    networks:
+      - uservices-network
+    restart: unless-stopped
+    depends_on:
+      - config-server
+
+  gateway:
+    container_name: ms-gateway
+    build: ../gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka
+    depends_on:
+      - config-server
+      - discovery
+    networks:
+      - uservices-network
+    restart: unless-stopped
+
+  # Business Microservices
+  customer:
+    container_name: ms-customer
+    build: ../customer
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka
+    depends_on:
+      - config-server
+      - discovery
+    networks:
+      - uservices-network
+    restart: unless-stopped
+
+  product:
+    container_name: ms-product
+    build: ../product
+    ports:
+      - "8050:8050"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka
+    depends_on:
+      - config-server
+      - discovery
+    networks:
+      - uservices-network
+    restart: unless-stopped
+    external_links:
+      - ms_pg_sql:postgresql
+
+  order:
+    container_name: ms-order
+    build: ../order
+    ports:
+      - "8070:8070"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka
+    depends_on:
+      - config-server
+      - discovery
+    networks:
+      - uservices-network
+    restart: unless-stopped
+    external_links:
+      - ms_pg_sql:postgresql
+      - ms_kafka:kafka
+
+  payment:
+    container_name: ms-payment
+    build: ../payment
+    ports:
+      - "8060:8060"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka
+    depends_on:
+      - config-server
+      - discovery
+    networks:
+      - uservices-network
+    restart: unless-stopped
+    external_links:
+      - ms_pg_sql:postgresql
+      - ms_kafka:kafka
+
+  notification:
+    container_name: ms-notification
+    build: ../notification
+    ports:
+      - "8040:8040"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka
+    depends_on:
+      - config-server
+      - discovery
+    networks:
+      - uservices-network
+    restart: unless-stopped
+    external_links:
+      - mongo_db:mongodb
+      - ms_kafka:kafka
+      - ms-mail-dev:mail-dev
+
+networks:
+  uservices-network:
+    driver: bridge
+

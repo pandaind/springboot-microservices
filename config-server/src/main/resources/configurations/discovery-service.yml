@@ -1,0 +1,76 @@
+# Default/Local Development Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+# Docker Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+eureka:
+  instance:
+    hostname: discovery
+    prefer-ip-address: false
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+# Kubernetes Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "k8s"
+eureka:
+  instance:
+    hostname: discovery
+    prefer-ip-address: false
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+# Production Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+eureka:
+  instance:
+    hostname: ${EUREKA_HOSTNAME:discovery}
+    prefer-ip-address: true
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+# Common Configuration
+---
+server:
+  port: 8761
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env
+  endpoint:
+    health:
+      show-details: always

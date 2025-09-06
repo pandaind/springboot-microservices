@@ -1,0 +1,185 @@
+# Common Configuration
+---
+server:
+  port: 8040
+
+# Local Development Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      host: localhost
+      port: 27017
+      database: notification
+      authentication-database: admin
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: paymentGroup,orderGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: orderConfirmation:in.pandac.ecommerce.kafka.order.OrderConfirmation,paymentConfirmation:in.pandac.ecommerce.kafka.payment.PaymentConfirmation
+  mail:
+    host: localhost
+    port: 1025
+    username: admin
+    password: admin
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+
+# Docker Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      host: mongodb
+      port: 27017
+      database: notification
+      authentication-database: admin
+  kafka:
+    consumer:
+      bootstrap-servers: kafka:9092
+      group-id: paymentGroup,orderGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: orderConfirmation:in.pandac.ecommerce.kafka.order.OrderConfirmation,paymentConfirmation:in.pandac.ecommerce.kafka.payment.PaymentConfirmation
+  mail:
+    host: mail-dev
+    port: 1025
+    username: admin
+    password: admin
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+
+# Kubernetes Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "k8s"
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      host: mongodb
+      port: 27017
+      database: notification
+      authentication-database: admin
+  kafka:
+    consumer:
+      bootstrap-servers: kafka:9092
+      group-id: paymentGroup,orderGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: orderConfirmation:in.pandac.ecommerce.kafka.order.OrderConfirmation,paymentConfirmation:in.pandac.ecommerce.kafka.payment.PaymentConfirmation
+  mail:
+    host: mail-dev
+    port: 1025
+    username: admin
+    password: admin
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+
+# Production Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  data:
+    mongodb:
+      username: ${MONGODB_USERNAME:admin}
+      password: ${MONGODB_PASSWORD:admin}
+      host: ${MONGODB_HOST:mongodb}
+      port: ${MONGODB_PORT:27017}
+      database: ${MONGODB_DATABASE:notification}
+      authentication-database: ${MONGODB_AUTH_DB:admin}
+      ssl:
+        enabled: ${MONGODB_SSL_ENABLED:false}
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_SERVERS:kafka:9092}
+      group-id: ${KAFKA_GROUP_ID:paymentGroup,orderGroup}
+      auto-offset-reset: ${KAFKA_OFFSET_RESET:earliest}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: orderConfirmation:in.pandac.ecommerce.kafka.order.OrderConfirmation,paymentConfirmation:in.pandac.ecommerce.kafka.payment.PaymentConfirmation
+        security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+        max.poll.records: 500
+        fetch.min.bytes: 1
+        fetch.max.wait.ms: 500
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enabled: ${MAIL_SMTP_STARTTLS:true}
+          connectiontimeout: ${MAIL_CONNECTION_TIMEOUT:5000}
+          timeout: ${MAIL_TIMEOUT:3000}
+          writetimeout: ${MAIL_WRITE_TIMEOUT:5000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    mongo:
+      enabled: true
+    kafka:
+      enabled: true
+    mail:
+      enabled: true

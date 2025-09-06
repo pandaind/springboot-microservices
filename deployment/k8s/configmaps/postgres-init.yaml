@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-script
+  namespace: microservices
+data:
+  init.sql: |
+    CREATE DATABASE customer;
+    CREATE DATABASE order;
+    CREATE DATABASE payment;
+    CREATE DATABASE product;

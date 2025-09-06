@@ -1,0 +1,33 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: customer-service
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+    import: optional:configserver:http://config-server:8888
+  application:
+    name: customer-service
+
+server:
+  port: 8090
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://discovery:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,178 @@
+# Common Configuration
+---
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path=/api/v1/customers/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/orders/**
+        - id: order-lines-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/order-lines/**
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/v1/products/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payments/**
+        - id: eureka-web
+          uri: http://discovery:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-web-other
+          uri: http://discovery:8761
+          predicates:
+            - Path=/eureka/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+# Local Development Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  cloud:
+    gateway:
+      routes:
+        - id: eureka-web
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-web-other
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+
+# Docker Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path=/api/v1/customers/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/orders/**
+        - id: order-lines-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/order-lines/**
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/v1/products/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payments/**
+        - id: eureka-web
+          uri: http://discovery:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-web-other
+          uri: http://discovery:8761
+          predicates:
+            - Path=/eureka/**
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://discovery:8761/eureka
+
+# Kubernetes Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "k8s"
+  cloud:
+    gateway:
+      routes:
+        - id: eureka-web
+          uri: http://discovery:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-web-other
+          uri: http://discovery:8761
+          predicates:
+            - Path=/eureka/**
+
+# Production Profile
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  cloud:
+    gateway:
+      routes:
+        - id: eureka-web
+          uri: http://${EUREKA_HOSTNAME:discovery}:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-web-other
+          uri: http://${EUREKA_HOSTNAME:discovery}:8761
+          predicates:
+            - Path=/eureka/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: ${ALLOWED_ORIGINS:"http://localhost:3000,https://yourdomain.com"}
+            allowedMethods: "GET,POST,PUT,DELETE,OPTIONS"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
