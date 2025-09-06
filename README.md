@@ -6,6 +6,8 @@ A comprehensive e-commerce platform built using Spring Boot microservices archit
 
 This project implements a microservices architecture with the following components:
 
+![micro-services-global-architecture.drawio](./diagrams/micro-services-global-architecture.drawio.png)																																																																																																																																																																																																																																					
+
 ### Infrastructure Services
 - **Config Server** - Centralized configuration management
 - **Discovery Service** - Service registry using Eureka
