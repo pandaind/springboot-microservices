@@ -42,17 +42,6 @@ out/
 .DS_Store
 Thumbs.db
 
-# Docker
-**/docker-compose.override.yml
-**/.env
-
-# Postman
-postman/*
-
-# Kubernetes
-*.yaml
-!deployment/k8s/**/*.yaml
-
 # Misc
 *.bak
 *.tmp
