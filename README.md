@@ -195,17 +195,36 @@ The system uses Apache Kafka for asynchronous communication:
 
 ### Project Structure
 ```
-├── config-server/          # Configuration server
-├── discovery/              # Eureka service registry
-├── gateway/                # API Gateway
-├── customer/               # Customer management service
-├── product/                # Product catalog service
-├── order/                  # Order processing service
-├── payment/                # Payment processing service
-├── notification/           # Notification service
-├── diagrams/               # Architecture diagrams
-├── docker-compose.infra.yml     # Infrastructure only  
-└── docker-compose.services.yml  # Application services only
+├── config-server/           # Centralized configuration server (Spring Cloud Config)
+├── customer/                # Customer management microservice
+├── discovery/               # Eureka service registry
+├── gateway/                 # API Gateway for routing and security
+├── notification/            # Notification microservice (email, etc.)
+├── order/                   # Order processing microservice
+├── payment/                 # Payment processing microservice
+├── product/                 # Product catalog and inventory microservice
+├── deployment/              # Deployment scripts, Docker Compose, Kubernetes YAMLs
+│   ├── build-images.sh
+│   ├── cleanup-k8s.sh
+│   ├── deploy-k8s.sh
+│   ├── docker-compose.infra.yml
+│   ├── docker-compose.services.yml
+│   ├── k8s-setup.sh
+│   └── k8s/
+│       ├── ingress.yaml
+│       ├── namespace.yaml
+│       ├── configmaps/
+│       ├── deployments/
+│       └── services/
+├── diagrams/                # Architecture and service diagrams
+│   └── micro-services.drawio
+├── postman/                 # Postman collections and environment files
+│   ├── E-commerce-Environment.postman_environment.json
+│   ├── E-commerce-Microservices.postman_collection.json
+│   └── QUICK_START_FLOWS.md
+├── KUBERNETES.md            # Kubernetes deployment guide
+├── README.md                # Project documentation
+└── TODO.md                  # Roadmap and future enhancements
 ```
 
 ### Database Migrations
@@ -239,4 +258,3 @@ The Product service includes Flyway migrations in `product/src/main/resources/db
 ## License
 
 This project is for educational purposes demonstrating Spring Boot microservices architecture.
-
